@@ -12,13 +12,14 @@ set(PLUGIN_SOURCES
 add_library(qofonoextdeclarative SHARED ${PLUGIN_SOURCES})
 
 target_include_directories(qofonoextdeclarative PRIVATE
-    ${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_SOURCE_DIR}/src ${QOFONO_QT_INCLUDE_DIRS}
 )
 
 target_link_libraries(qofonoextdeclarative PRIVATE
     Qt5::Qml
     Qt5::DBus
     qofonoext
+    ${QOFONO_QT_LIBRARIES}
 )
 
 install(TARGETS qofonoextdeclarative
@@ -42,14 +43,18 @@ function(qt5_add_qml_module TARGET)
     endif()
 
     get_target_property(_outname ${TARGET} OUTPUT_NAME)
+    if(NOT _outname)
+        set(_outname ${TARGET})
+    endif()
 
     find_program(_QMLPLUGINDUMP_EXECUTABLE NAMES qmlplugindump-qt5 qmlplugindump)
     if(NOT _QMLPLUGINDUMP_EXECUTABLE)
-        message(FATAL_ERROR "qmlplugindump not found")
+    message(FATAL_ERROR "qmlplugindump not found")
     endif()
-
+    
     set(_plugin_filename "${CMAKE_SHARED_LIBRARY_PREFIX}${_outname}${CMAKE_SHARED_LIBRARY_SUFFIX}")
-    set(_qmldir_dir "${CMAKE_CURRENT_BINARY_DIR}/${QMLMOD_URI}")
+    string(REPLACE "." "/" QMLMOD_URI_PATH "${QMLMOD_URI}")
+    set(_qmldir_dir "${CMAKE_CURRENT_BINARY_DIR}/${QMLMOD_URI_PATH}")
     set(_qmldir_path "${_qmldir_dir}/qmldir")
     set(_qmltypes_out "${_qmldir_dir}/plugins.qmltypes")
 
@@ -57,8 +62,6 @@ function(qt5_add_qml_module TARGET)
     file(WRITE ${_qmldir_path} "module ${QMLMOD_URI}\n")
     file(APPEND ${_qmldir_path} "plugin ${_outname}\n")
     file(APPEND ${_qmldir_path} "typeinfo plugins.qmltypes\n")
-
-    set(_qmltypes_out ${CMAKE_CURRENT_BINARY_DIR}/plugins.qmltypes)
 
     add_custom_command(TARGET ${TARGET}
         POST_BUILD

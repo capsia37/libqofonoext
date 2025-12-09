@@ -29,14 +29,10 @@ set_target_properties(
 )
 
 target_compile_definitions(qofonoext PRIVATE QOFONOEXT_LIBRARY)
-
 target_compile_options(qofonoext PRIVATE -Wno-unused-parameter -Wno-psabi)
 
-target_link_libraries(qofonoext
-    PRIVATE Qt5::DBus
-)
-
-# Add pkgconfig dependency on qofono-qt${QT_MAJOR_VERSION}
+target_include_directories(qofonoext PRIVATE ${QOFONO_QT_INCLUDE_DIRS})
+target_link_libraries(qofonoext PRIVATE ${QOFONO_QT_LIBRARIES} Qt5::DBus)
 
 ### INSTALL ###
 

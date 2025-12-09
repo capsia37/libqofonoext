@@ -15,12 +15,29 @@ set(CMAKE_AUTOUIC ON)
 
 include(FeatureSummary)
 find_package(Qt5 COMPONENTS DBus Qml)
+find_package(PkgConfig)
+
+pkg_check_modules(QOFONO_QT REQUIRED qofono-qt${QT_MAJOR_VERSION})
 
 set_package_properties(Qt5
     PROPERTIES
     TYPE REQUIRED
     DESCRIPTION "Qt5 libraries"
     URL "https://www.qt.io"
+)
+
+set_package_properties(PkgConfig
+    PROPERTIES
+    TYPE REQUIRED
+    DESCRIPTION "Helper tool for compiling applications and libraries"
+    URL "https://www.freedesktop.org/wiki/Software/pkg-config/"
+)
+
+set_package_properties(QOFONO_QT
+    PROPERTIES
+    TYPE REQUIRED
+    DESCRIPTION "Library for accessing the ofono daemon"
+    URL "https://github.com/sailfishos/libqofono"
 )
 
 feature_summary(WHAT REQUIRED_PACKAGES_NOT_FOUND FATAL_ON_MISSING_REQUIRED_PACKAGES)
