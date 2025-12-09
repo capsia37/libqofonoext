@@ -1,3 +1,0 @@
-module org.nemomobile.ofono
-plugin qofonoextdeclarative
-typeinfo plugins.qmltypes
