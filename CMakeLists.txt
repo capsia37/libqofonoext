@@ -14,17 +14,31 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 
 include(FeatureSummary)
-find_package(Qt5 COMPONENTS DBus Qml)
 find_package(PkgConfig)
 
 pkg_check_modules(QOFONO_QT REQUIRED qofono-qt${QT_MAJOR_VERSION})
 
-set_package_properties(Qt5
-    PROPERTIES
-    TYPE REQUIRED
-    DESCRIPTION "Qt5 libraries"
-    URL "https://www.qt.io"
-)
+if(QT_MAJOR_VERSION STREQUAL "6")
+    find_package(Qt6 COMPONENTS DBus Qml)
+    set_package_properties(Qt6
+        PROPERTIES
+        TYPE REQUIRED
+        DESCRIPTION "Qt6 libraries"
+        URL "https://www.qt.io"
+    )
+    SET(QTDBUS_LIB Qt6::DBus)
+    SET(QTQML_LIB Qt6::Qml)
+else()
+    find_package(Qt5 COMPONENTS DBus Qml)
+    set_package_properties(Qt5
+        PROPERTIES
+        TYPE REQUIRED
+        DESCRIPTION "Qt5 libraries"
+        URL "https://www.qt.io"
+    )
+    SET(QTDBUS_LIB Qt5::DBus)
+    SET(QTQML_LIB Qt5::Qml)
+endif()
 
 set_package_properties(PkgConfig
     PROPERTIES
@@ -41,6 +55,12 @@ set_package_properties(QOFONO_QT
 )
 
 feature_summary(WHAT REQUIRED_PACKAGES_NOT_FOUND FATAL_ON_MISSING_REQUIRED_PACKAGES)
+
+if(QT_MAJOR_VERSION STREQUAL "6")
+    set(QTVERSION_SUFFIX "-qt6")
+else()
+    SET(QTVERSION_SUFFIX "")
+endif()
 
 add_subdirectory(src)
 add_subdirectory(plugin)

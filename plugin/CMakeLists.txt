@@ -16,21 +16,23 @@ target_include_directories(qofonoextdeclarative PRIVATE
 )
 
 target_link_libraries(qofonoextdeclarative PRIVATE
-    Qt5::Qml
-    Qt5::DBus
-    qofonoext
+    ${QTQML_LIB}
+    ${QTDBUS_LIB}
+    qofonoext${QTVERSION_SUFFIX}
     ${QOFONO_QT_LIBRARIES}
 )
 
 install(TARGETS qofonoextdeclarative
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/qt5/qml/org/nemomobile/ofono
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/qt${QT_MAJOR_VERSION}/qml/org/nemomobile/ofono
 )
 
-install(FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/org/nemomobile/ofono/qmldir
-    ${CMAKE_CURRENT_BINARY_DIR}/org/nemomobile/ofono/plugins.qmltypes
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/qt5/qml/org/nemomobile/ofono
-)
+if(QT_MAJOR_VERSION STREQUAL "5")
+    install(FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/org/nemomobile/ofono/qmldir
+        ${CMAKE_CURRENT_BINARY_DIR}/org/nemomobile/ofono/plugins.qmltypes
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/qt${QT_MAJOR_VERSION}/qml/org/nemomobile/ofono
+    )
+endif()
 
 # Helper to replicate Qt6 qt_add_qml_module behavior for Qt5 builds.
 # Generates a qmldir and plugins.qmltypes file for the given target.
@@ -81,8 +83,16 @@ function(qt5_add_qml_module TARGET)
     )
 endfunction()
 
-qt5_add_qml_module(
-    qofonoextdeclarative
-    URI org.nemomobile.ofono
-    VERSION 1.0
-)
+if(QT_MAJOR_VERSION STREQUAL "6")
+    qt_add_qml_module(
+        qofonoextdeclarative
+        URI org.nemomobile.ofono
+        VERSION 1.0
+    )
+else()
+    qt5_add_qml_module(
+        qofonoextdeclarative
+        URI org.nemomobile.ofono
+        VERSION 1.0
+    )
+endif()
