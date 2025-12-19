@@ -88,6 +88,8 @@ if(QT_MAJOR_VERSION STREQUAL "6")
         qofonoextdeclarative
         URI org.nemomobile.ofono
         VERSION 1.0
+        OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/qt6/qml/org/nemomobile/ofono"
+        RESOURCE_PREFIX "/qt6/qml/"
     )
 else()
     qt5_add_qml_module(
